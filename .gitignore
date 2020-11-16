@@ -1,0 +1,5 @@
+﻿.vs
+IrcClient/bin
+IrcServer/bin
+IrcClient/obj
+IrcServer/obj
