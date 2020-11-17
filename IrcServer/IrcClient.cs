@@ -67,12 +67,12 @@ namespace IrcServer
                     byte[] bytesToRead = new byte[m_client.ReceiveBufferSize];
                     int bytesRead = m_stream.Read(bytesToRead, 0, m_client.ReceiveBufferSize);
 
-                    m_messageHandler.SendMessage(new Message(MessageType.Standard, this, Encoding.ASCII.GetString(bytesToRead, 0, bytesRead)));
+                    m_messageHandler.HandleMessage(new Message(MessageType.Standard, this, Encoding.ASCII.GetString(bytesToRead, 0, bytesRead)));
                 }
                 catch (SystemException)
                 {
                     m_connectionValid = false;
-                    m_messageHandler.SendMessage(new Message(MessageType.ConnectionClosed, this, ""));
+                    m_messageHandler.HandleMessage(new Message(MessageType.ConnectionClosed, this, ""));
                 }
             }
         }

@@ -26,6 +26,6 @@ namespace IrcServer
     
     interface IMessageHandler
     {
-        void SendMessage(Message message);
+        void HandleMessage(Message message);
     }
 }
