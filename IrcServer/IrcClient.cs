@@ -18,6 +18,30 @@ namespace IrcServer
             m_connectionValid = true;
             m_receiveMessages = new Thread(ReceiveMessages);
             m_receiveMessages.Start();
+
+            m_registered = false;
+        }
+
+        public bool IsRegistered()
+        {
+            lock (this)
+            {
+                return m_registered;
+            }
+        }
+
+        public void Register(string nickname)
+        {
+            lock(this)
+            {
+                m_nickname = nickname;
+                m_registered = true;
+            }
+        }
+
+        public string GetNickname()
+        {
+            return m_nickname;
         }
 
         public int SendMessage(string msg)
@@ -34,7 +58,7 @@ namespace IrcServer
             }
         }
 
-        public void ReceiveMessages()
+        private void ReceiveMessages()
         {
             while (m_connectionValid)
             {
@@ -42,7 +66,6 @@ namespace IrcServer
                 {
                     byte[] bytesToRead = new byte[m_client.ReceiveBufferSize];
                     int bytesRead = m_stream.Read(bytesToRead, 0, m_client.ReceiveBufferSize);
-
 
                     m_messageHandler.SendMessage(new Message(MessageType.Standard, this, Encoding.ASCII.GetString(bytesToRead, 0, bytesRead)));
                 }
@@ -59,5 +82,8 @@ namespace IrcServer
         private Thread m_receiveMessages;
         private IMessageHandler m_messageHandler;
         bool m_connectionValid;
+
+        bool m_registered;
+        string m_nickname;
     }
 }
