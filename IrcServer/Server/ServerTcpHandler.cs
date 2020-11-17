@@ -14,7 +14,6 @@ namespace IrcServer
         {
             IPAddress localAdd = IPAddress.Parse(ip);
             m_listener = new TcpListener(localAdd, port);
-            Console.WriteLine("Listening...");
             m_listener.Start();
 
             m_newClientCb = newClientCb;

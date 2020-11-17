@@ -14,10 +14,20 @@ namespace IrcServer
 
         static void Main(string[] args)
         {
-            IrcServer server = new IrcServer(SERVER_IP, PORT_NO);
+            IrcServer server;
+            try
+            {
+                server = new IrcServer(SERVER_IP, PORT_NO);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Could not start the server. Please try again later.");
+                Console.ReadLine();
+                return;
+            }
 
+            Console.WriteLine("The IRC server is operational!");
             Console.ReadLine();
         }
     }
-
 }
