@@ -50,6 +50,9 @@ namespace IrcClient
                     case "--r":
                         TryRegister(client, msg);
                         break;
+                    case "--c":
+                        TryCreate(client, msg);
+                        break;
                     default:
                         Console.WriteLine("Unrecognized command.");
                         break;
@@ -62,6 +65,7 @@ namespace IrcClient
             Console.WriteLine("List of IRC commands:");
             Console.WriteLine("  --h: print list of commands");
             Console.WriteLine("  --r <nickname>: register under desired nickname");
+            Console.WriteLine("  --c <room name>: create a new room with the desired name");
         }
 
         static private void TryRegister(IrcClient client, string message)
@@ -70,15 +74,36 @@ namespace IrcClient
             if (pieces.Length < 2)
             {
                 Console.WriteLine("Must include a nickname");
+                return;
             }
 
             if (pieces.Length > 2)
             {
                 Console.WriteLine("Nickname can't contain spaces");
+                return;
             }
 
             var nickname = pieces[1];
             client.Register(nickname);
+        }
+
+        static private void TryCreate(IrcClient client, string message)
+        {
+            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            if (pieces.Length < 2)
+            {
+                Console.WriteLine("Must include a room name");
+                return;
+            }
+
+            if (pieces.Length > 2)
+            {
+                Console.WriteLine("Room name can't contain spaces");
+                return;
+            }
+
+            var roomname = pieces[1];
+            client.Create(roomname);
         }
     }
 }

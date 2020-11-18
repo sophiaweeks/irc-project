@@ -57,11 +57,29 @@ namespace IrcClient
                     case "306":
                         Handle306(pieces.Skip(1).ToArray());
                         break;
+                    case "307":
+                        Handle307(pieces.Skip(1).ToArray());
+                        break;
+                    case "405":
+                        Handle405(pieces.Skip(1).ToArray());
+                        break;
+                    case "406":
+                        Handle406(pieces.Skip(1).ToArray());
+                        break;
+                    case "407":
+                        Handle407(pieces.Skip(1).ToArray());
+                        break;
+                    case "408":
+                        Handle408(pieces.Skip(1).ToArray());
+                        break;
                     case "409":
                         Handle409(pieces.Skip(1).ToArray());
                         break;
                     case "410":
                         Handle410(pieces.Skip(1).ToArray());
+                        break;
+                    case "411":
+                        Handle411(pieces.Skip(1).ToArray());
                         break;
                     case "412":
                         Handle412(pieces.Skip(1).ToArray());
@@ -84,6 +102,61 @@ namespace IrcClient
             Console.WriteLine("Successfully registered under nickname: {0}", nickname);
         }
 
+        static private void Handle307(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("Successfully created room: {0}", roomname);
+        }
+
+        static private void Handle405(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("ERROR: Couldn't create room {0} due to too many rooms", roomname);
+        }
+
+        static private void Handle406(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("ERROR: Couldn't create room {0} due to room name in use", roomname);
+        }
+
+        static private void Handle407(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("ERROR: Couldn't create room {0} due to erroneous room name", roomname);
+        }
+
+        static private void Handle408(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var command = arguments[0];
+            Console.WriteLine("ERROR: Unknown command: {0}", command);
+        }
+        
         static private void Handle409(string[] arguments)
         {
             if (arguments.Length < 1)
@@ -106,6 +179,17 @@ namespace IrcClient
             Console.WriteLine("ERROR: Failed to register due to nickname in use: {0}", nickname);
         }
 
+        static private void Handle411(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var command = arguments[0];
+            Console.WriteLine("ERROR: Couldn't execute command \"{0}\" because you are not registered", command);
+        }
+
         static private void Handle412(string[] arguments)
         {
             if (arguments.Length < 1)
@@ -114,7 +198,7 @@ namespace IrcClient
             }
 
             var command = arguments[0];
-            Console.WriteLine("ERROR: Failed to register due to not enough params: {0}", command);
+            Console.WriteLine("ERROR: Couldn't execute command \"{0}\" due to not enough params: {0}", command);
         }
 
         static private void Handle413(string[] arguments)
