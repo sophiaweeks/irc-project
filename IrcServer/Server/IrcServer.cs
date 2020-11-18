@@ -54,6 +54,29 @@ namespace IrcServer
             return false;
         }
 
+        public bool IsRoomNameInUse(string roomname)
+        {
+            foreach (Room room in m_rooms)
+            {
+                if (room.GetName() == roomname)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public int GetNumRooms()
+        {
+            return m_rooms.Count();
+        }
+
+        public void AddRoom(string roomname, IrcClient creator)
+        {
+            m_rooms.Add(new Room(roomname, creator));
+        }
+
         // private methods
         private void ProcessQueue()
         {
@@ -107,8 +130,10 @@ namespace IrcServer
 
         private ServerTcpHandler m_tcpHandler;
         private MessageProcessor m_messageProcessor;
-        private List<IrcClient> m_clients = new List<IrcClient>();    
+        private List<IrcClient> m_clients = new List<IrcClient>();
+        private List<Room> m_rooms = new List<Room>();
         private Queue<Message> m_messageQueue = new Queue<Message>();
         private Thread m_processQueue;
+
     }
 }

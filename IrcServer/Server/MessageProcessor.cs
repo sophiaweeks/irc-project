@@ -27,13 +27,17 @@ namespace IrcServer
 
                 var command = pieces[0];
 
-                if (command == "NICK")
+                switch(command)
                 {
-                    HandleNick(pieces.Skip(1).ToArray(), message.Client);
-                }
-                else
-                {
-                    HandleUnknownCommand(command, message.Client);
+                    case "NICK":
+                        HandleNick(pieces.Skip(1).ToArray(), message.Client);
+                        break;
+                    case "CREATE":
+                        HandleCreate(pieces.Skip(1).ToArray(), message.Client);
+                        break;
+                    default:
+                        HandleUnknownCommand(command, message.Client);
+                        break;
                 }
             }
         }
@@ -76,6 +80,50 @@ namespace IrcServer
             client.SendMessage(response);
         }
 
+        private void HandleCreate(string[] arguments, IrcClient client)
+        {
+            if (!client.IsRegistered())
+            {
+                string msg = String.Format("411 CREATE CR LF"); //ERR_NOTREGISTERED
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (arguments.Count() < 1)
+            {
+                string msg = "412 CREATE CR LF"; //ERR_NEEDMOREPARAMS
+                client.SendMessage(msg);
+                return;
+            }
+
+            var roomname = arguments[0];
+
+            if (roomname.Length > MAX_ROOM_LENGTH)
+            {
+                string msg = String.Format("407 {0} CR LF", roomname); //ERR_ERRONEOUSROOMNAME
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (m_ircServer.IsRoomNameInUse(roomname))
+            {
+                string msg = String.Format("406 {0} CR LF", roomname); //ERR_ROOMNAMEINUSE
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (m_ircServer.GetNumRooms() >= MAX_ROOM_NUM)
+            {
+                string msg = String.Format("405 {0} CR LF", roomname); //ERR_TOOMANYROOMS
+                client.SendMessage(msg);
+                return;
+            }
+
+            m_ircServer.AddRoom(roomname, client);
+
+            string response = String.Format("307 {0} CR LF", roomname); //RPL_CREATESUCCEEDED
+            client.SendMessage(response);
+        }
 
         private void HandleUnknownCommand(string command, IrcClient client)
         {
@@ -86,5 +134,7 @@ namespace IrcServer
         private IIrcServer m_ircServer;
 
         private const int MAX_NICKNAME_LENGTH = 9;
+        private const int MAX_ROOM_LENGTH = 20;
+        private const int MAX_ROOM_NUM = 500;
     }
 }
