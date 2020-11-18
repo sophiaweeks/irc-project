@@ -71,6 +71,9 @@ namespace IrcServer
             }
 
             client.Register(nickname);
+
+            string response = String.Format("306 {0} CR LF", nickname); //RPL_REGISTERSUCCEEDED
+            client.SendMessage(response);
         }
 
 

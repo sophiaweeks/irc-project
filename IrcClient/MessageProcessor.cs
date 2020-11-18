@@ -54,6 +54,9 @@ namespace IrcClient
 
                 switch (command)
                 {
+                    case "306":
+                        Handle306(pieces.Skip(1).ToArray());
+                        break;
                     case "409":
                         Handle409(pieces.Skip(1).ToArray());
                         break;
@@ -70,6 +73,17 @@ namespace IrcClient
             }
         }
 
+        static private void Handle306(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var nickname = arguments[0];
+            Console.WriteLine("Successfully registered under nickname: {0}", nickname);
+        }
+
         static private void Handle409(string[] arguments)
         {
             if (arguments.Length < 1)
@@ -78,7 +92,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Command \"NICK\" failed due to erroneous nickname: {0}", nickname);
+            Console.WriteLine("ERROR: Failed to register due to erroneous nickname: {0}", nickname);
         }
 
         static private void Handle410(string[] arguments)
@@ -89,7 +103,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Command \"NICK\" failed due to nickname in use: {0}", nickname);
+            Console.WriteLine("ERROR: Failed to register due to nickname in use: {0}", nickname);
         }
 
         static private void Handle412(string[] arguments)
@@ -100,7 +114,7 @@ namespace IrcClient
             }
 
             var command = arguments[0];
-            Console.WriteLine("ERROR: Command {0} failed due to not enough params: {0}", command);
+            Console.WriteLine("ERROR: Failed to register due to not enough params: {0}", command);
         }
 
         static private void Handle413(string[] arguments)
@@ -111,7 +125,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Command \"NICK\" failed due already registered under nickname: {0}", nickname);
+            Console.WriteLine("ERROR: Failed to register due already registered under nickname: {0}", nickname);
         }
     }
 }
