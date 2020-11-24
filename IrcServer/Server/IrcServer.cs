@@ -72,9 +72,9 @@ namespace IrcServer
             return m_rooms.Count();
         }
 
-        public void AddRoom(string roomname, IrcClient creator)
+        public void AddRoom(string roomname)
         {
-            m_rooms.Add(new Room(roomname, creator));
+            m_rooms.Add(new Room(roomname));
         }
 
         public Room GetRoom(string roomname)

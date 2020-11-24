@@ -122,9 +122,15 @@ namespace IrcServer
                 return;
             }
 
-            m_ircServer.AddRoom(roomname, client);
+            m_ircServer.AddRoom(roomname);
 
             string response = String.Format("307 {0} CR LF", roomname); //RPL_CREATESUCCEEDED
+            client.SendMessage(response);
+
+            Room room = m_ircServer.GetRoom(roomname);
+            room.Members.Add(client);
+
+            response = String.Format("308 {0} CR LF", roomname); //RPL_JOINSUCCEEDED
             client.SendMessage(response);
         }
 
@@ -167,6 +173,9 @@ namespace IrcServer
                 client.SendMessage(msg);
                 return;
             }
+
+            string notification = String.Format("308 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_JOINSUCCEEDED
+            room.SendMessage(notification);
 
             room.Members.Add(client);
 

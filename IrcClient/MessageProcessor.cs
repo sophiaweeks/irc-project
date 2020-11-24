@@ -134,6 +134,14 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
+
+            if (arguments.Length > 1)
+            {
+                var nickname = arguments[1];
+                Console.WriteLine("{0} joined room {1}", nickname, roomname);
+                return;
+            }
+
             Console.WriteLine("Successfully joined room: {0}", roomname);
         }
 

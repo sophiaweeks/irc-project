@@ -9,7 +9,7 @@ namespace IrcServer
         bool IsNicknameInUse(string nickname);
         bool IsRoomNameInUse(string roomname);
         int GetNumRooms();
-        void AddRoom(string roomname, IrcClient creator);
+        void AddRoom(string roomname);
         Room GetRoom(string rooomname);
     }
 }
