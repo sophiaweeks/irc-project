@@ -35,6 +35,11 @@ namespace IrcServer
         }
 
         // IIrcServer
+        public void RemoveClient(IrcClient client)
+        {
+            InternalRemoveClient(client);
+        }
+
         public bool IsNicknameInUse(string nickname)
         {
             List<IrcClient> copyClientList;
@@ -119,7 +124,7 @@ namespace IrcServer
             switch (message.Type)
             {
                 case MessageType.ConnectionClosed:
-                    RemoveClient(message.Client);
+                    InternalRemoveClient(message.Client);
                     break;
                 case MessageType.Standard:
                     m_messageProcessor.ParseMessage(message);
@@ -135,7 +140,7 @@ namespace IrcServer
             }
         }
 
-        private void RemoveClient(IrcClient removeClient)
+        private void InternalRemoveClient(IrcClient removeClient)
         {
             var removeRooms = new List<Room>();
             foreach (Room r in m_rooms)

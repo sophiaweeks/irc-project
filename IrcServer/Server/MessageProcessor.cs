@@ -41,6 +41,9 @@ namespace IrcServer
                     case "LEAVE":
                         HandleLeave(pieces.Skip(1).ToArray(), message.Client);
                         break;
+                    case "QUIT":
+                        HandleQuit(pieces.Skip(1).ToArray(), message.Client);
+                        break;
                     default:
                         HandleUnknownCommand(command, message.Client);
                         break;
@@ -83,6 +86,13 @@ namespace IrcServer
             client.Register(nickname);
 
             string response = String.Format("306 {0} CR LF", nickname); //RPL_REGISTERSUCCEEDED
+            client.SendMessage(response);
+        }
+
+        private void HandleQuit(string[] arguments, IrcClient client)
+        {
+            m_ircServer.RemoveClient(client);
+            string response = String.Format("310 CR LF"); //RPL_QUITSUCCEEDED
             client.SendMessage(response);
         }
 

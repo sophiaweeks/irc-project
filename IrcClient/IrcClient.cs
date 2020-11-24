@@ -20,6 +20,12 @@ namespace IrcClient
             m_processQueue.Abort();
         }
 
+        public void Quit()
+        {
+            string message = "QUIT CR LF";
+            m_tcpHandler.SendMessage(message);
+        }
+
         public void Register(string nickname)
         {
             string message = "NICK " + nickname + " CR LF";

@@ -67,6 +67,9 @@ namespace IrcClient
                     case "309":
                         Handle309(pieces.Skip(1).ToArray());
                         break;
+                    case "310":
+                        Handle310(pieces.Skip(1).ToArray());
+                        break;
                     case "402":
                         Handle402(pieces.Skip(1).ToArray());
                         break;
@@ -165,6 +168,11 @@ namespace IrcClient
             }
 
             Console.WriteLine("Successfully left room: {0}", roomname);
+        }
+
+        static private void Handle310(string[] arguments)
+        {
+            Console.WriteLine("Successfully quit");
         }
 
         static private void Handle402(string[] arguments)

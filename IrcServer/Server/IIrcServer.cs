@@ -6,6 +6,7 @@ namespace IrcServer
 {
     interface IIrcServer
     {
+        void RemoveClient(IrcClient client);
         bool IsNicknameInUse(string nickname);
         bool IsRoomNameInUse(string roomname);
         int GetNumRooms();

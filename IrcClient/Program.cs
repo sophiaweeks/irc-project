@@ -30,8 +30,21 @@ namespace IrcClient
 
             Console.WriteLine("Connection successful!");
             Console.WriteLine("Press --h for a list of commands. Hint: start by registering under a nickname.");
+            Console.WriteLine();
 
-            while (true)
+            RunProgram(client);
+
+            Console.WriteLine();
+            Console.WriteLine("Goodbye!");
+            Thread.Sleep(1000);
+
+            Environment.Exit(0);
+        }
+
+        static private void RunProgram(IrcClient client)
+        {
+            bool quit = false;
+            while (!quit)
             {
                 var msg = Console.ReadLine();
                 if (msg.Length < 3)
@@ -42,10 +55,14 @@ namespace IrcClient
 
                 var command = msg.Substring(0, 3);
 
-                switch(command)
+                switch (command)
                 {
                     case "--h":
                         PrintCommands();
+                        break;
+                    case "--q":
+                        Quit(client);
+                        quit = true;
                         break;
                     case "--r":
                         TryRegister(client, msg);
@@ -70,10 +87,16 @@ namespace IrcClient
         {
             Console.WriteLine("List of IRC commands:");
             Console.WriteLine("  --h: print list of commands");
+            Console.WriteLine("  --q: quit IRC");
             Console.WriteLine("  --r <nickname>: register under desired nickname");
             Console.WriteLine("  --c <room name>: create a new room with the desired name");
             Console.WriteLine("  --j <room name>: join the room with the specified name");
             Console.WriteLine("  --l <room name>: leave the room with the specified name");
+        }
+
+        static private void Quit(IrcClient client)
+        {
+            client.Quit();
         }
 
         static private void TryRegister(IrcClient client, string message)
