@@ -32,6 +32,12 @@ namespace IrcClient
             m_tcpHandler.SendMessage(message);
         }
 
+        public void Join(string roomname)
+        {
+            string message = "JOIN " + roomname + " CR LF";
+            m_tcpHandler.SendMessage(message);
+        }
+
         private void ProcessQueue()
         {
             while (true)

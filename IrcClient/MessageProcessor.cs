@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace IrcClient
 {
@@ -60,6 +61,15 @@ namespace IrcClient
                     case "307":
                         Handle307(pieces.Skip(1).ToArray());
                         break;
+                    case "308":
+                        Handle308(pieces.Skip(1).ToArray());
+                        break;
+                    case "402":
+                        Handle402(pieces.Skip(1).ToArray());
+                        break;
+                    case "404":
+                        Handle404(pieces.Skip(1).ToArray());
+                        break;
                     case "405":
                         Handle405(pieces.Skip(1).ToArray());
                         break;
@@ -87,6 +97,9 @@ namespace IrcClient
                     case "413":
                         Handle413(pieces.Skip(1).ToArray());
                         break;
+                    case "414":
+                        Handle414(pieces.Skip(1).ToArray());
+                        break;
                 }
             }
         }
@@ -111,6 +124,39 @@ namespace IrcClient
 
             var roomname = arguments[0];
             Console.WriteLine("Successfully created room: {0}", roomname);
+        }
+
+        static private void Handle308(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("Successfully joined room: {0}", roomname);
+        }
+
+        static private void Handle402(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("ERROR: Couldn't join room {0} due to no such room", roomname);
+        }
+
+        static private void Handle404(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("ERROR: Couldn't join room {0} due to already joined", roomname);
         }
 
         static private void Handle405(string[] arguments)
@@ -202,6 +248,17 @@ namespace IrcClient
         }
 
         static private void Handle413(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var nickname = arguments[0];
+            Console.WriteLine("ERROR: Failed to register due already registered under nickname: {0}", nickname);
+        }
+
+        static private void Handle414(string[] arguments)
         {
             if (arguments.Length < 1)
             {

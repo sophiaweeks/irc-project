@@ -77,6 +77,19 @@ namespace IrcServer
             m_rooms.Add(new Room(roomname, creator));
         }
 
+        public Room GetRoom(string roomname)
+        {
+            foreach (Room r in m_rooms)
+            {
+                if (r.GetName() == roomname)
+                {
+                    return r;
+                }
+            }
+
+            return null;
+        }
+
         // private methods
         private void ProcessQueue()
         {

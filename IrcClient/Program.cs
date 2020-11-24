@@ -53,6 +53,9 @@ namespace IrcClient
                     case "--c":
                         TryCreate(client, msg);
                         break;
+                    case "--j":
+                        TryJoin(client, msg);
+                        break;
                     default:
                         Console.WriteLine("Unrecognized command.");
                         break;
@@ -66,6 +69,7 @@ namespace IrcClient
             Console.WriteLine("  --h: print list of commands");
             Console.WriteLine("  --r <nickname>: register under desired nickname");
             Console.WriteLine("  --c <room name>: create a new room with the desired name");
+            Console.WriteLine("  --j <room name>: join the room with the specified name");
         }
 
         static private void TryRegister(IrcClient client, string message)
@@ -104,6 +108,25 @@ namespace IrcClient
 
             var roomname = pieces[1];
             client.Create(roomname);
+        }
+
+        static private void TryJoin(IrcClient client, string message)
+        {
+            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            if (pieces.Length < 2)
+            {
+                Console.WriteLine("Must include a room name");
+                return;
+            }
+
+            if (pieces.Length > 2)
+            {
+                Console.WriteLine("Room name can't contain spaces");
+                return;
+            }
+
+            var roomname = pieces[1];
+            client.Join(roomname);
         }
     }
 }

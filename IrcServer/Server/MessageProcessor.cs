@@ -35,6 +35,9 @@ namespace IrcServer
                     case "CREATE":
                         HandleCreate(pieces.Skip(1).ToArray(), message.Client);
                         break;
+                    case "JOIN":
+                        HandleJoin(pieces.Skip(1).ToArray(), message.Client);
+                        break;
                     default:
                         HandleUnknownCommand(command, message.Client);
                         break;
@@ -125,6 +128,52 @@ namespace IrcServer
             client.SendMessage(response);
         }
 
+        private void HandleJoin(string[] arguments, IrcClient client)
+        {
+            if (!client.IsRegistered())
+            {
+                string msg = String.Format("411 JOIN CR LF"); //ERR_NOTREGISTERED
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (arguments.Count() < 1)
+            {
+                string msg = "412 JOIN CR LF"; //ERR_NEEDMOREPARAMS
+                client.SendMessage(msg);
+                return;
+            }
+
+            var roomname = arguments[0];
+
+            Room room = m_ircServer.GetRoom(roomname);
+            if (room == null)
+            {
+                string msg = String.Format("402 {0} CR LF", roomname); //ERR_NOSUCHROOM
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (room.Members.Contains(client))
+            {
+                string msg = String.Format("404 {0} CR LF", roomname); //ERR_ALREADYJOINED
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (room.Members.Count >= MAX_NUM_ROOM_MEMBERS)
+            {
+                string msg = String.Format("414 {0} CR LF", roomname); //ERR_ROOMISFULL
+                client.SendMessage(msg);
+                return;
+            }
+
+            room.Members.Add(client);
+
+            string response = String.Format("308 {0} CR LF", roomname); //RPL_JOINSUCCEEDED
+            client.SendMessage(response);
+        }
+
         private void HandleUnknownCommand(string command, IrcClient client)
         {
             string msg = String.Format("408 {0} CR LF", command); //ERR_UNKNOWNCOMMAND
@@ -136,5 +185,6 @@ namespace IrcServer
         private const int MAX_NICKNAME_LENGTH = 9;
         private const int MAX_ROOM_LENGTH = 20;
         private const int MAX_ROOM_NUM = 500;
+        private const int MAX_NUM_ROOM_MEMBERS = 50;
     }
 }
