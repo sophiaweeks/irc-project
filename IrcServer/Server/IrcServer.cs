@@ -98,17 +98,14 @@ namespace IrcServer
                 Message message = null;
                 lock (m_messageQueue)
                 {
-                    Monitor.Wait(m_messageQueue);
-                    if (m_messageQueue.Count > 0)
+                    while (m_messageQueue.Count < 1)
                     {
-                        message = m_messageQueue.Dequeue();
+                        Monitor.Wait(m_messageQueue);
                     }
+                    message = m_messageQueue.Dequeue();
                 }
-
-                if (message != null)
-                {
-                    ProcessMessage(message);
-                }
+                
+                ProcessMessage(message);
             }
         }
 
