@@ -64,6 +64,9 @@ namespace IrcClient
                     case "308":
                         Handle308(pieces.Skip(1).ToArray());
                         break;
+                    case "309":
+                        Handle309(pieces.Skip(1).ToArray());
+                        break;
                     case "402":
                         Handle402(pieces.Skip(1).ToArray());
                         break;
@@ -145,7 +148,7 @@ namespace IrcClient
             Console.WriteLine("Successfully joined room: {0}", roomname);
         }
 
-        static private void Handle402(string[] arguments)
+        static private void Handle309(string[] arguments)
         {
             if (arguments.Length < 1)
             {
@@ -153,7 +156,27 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("ERROR: Couldn't join room {0} due to no such room", roomname);
+
+            if (arguments.Length > 1)
+            {
+                var nickname = arguments[1];
+                Console.WriteLine("{0} left room {1}", nickname, roomname);
+                return;
+            }
+
+            Console.WriteLine("Successfully left room: {0}", roomname);
+        }
+
+        static private void Handle402(string[] arguments)
+        {
+            if (arguments.Length < 2)
+            {
+                return;
+            }
+
+            var command = arguments[0];
+            var roomname = arguments[1];
+            Console.WriteLine("ERROR: Couldn't execute command {0} on room {1} due to no such room", command, roomname);
         }
 
         static private void Handle404(string[] arguments)

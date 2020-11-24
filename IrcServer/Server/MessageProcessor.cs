@@ -38,6 +38,9 @@ namespace IrcServer
                     case "JOIN":
                         HandleJoin(pieces.Skip(1).ToArray(), message.Client);
                         break;
+                    case "LEAVE":
+                        HandleLeave(pieces.Skip(1).ToArray(), message.Client);
+                        break;
                     default:
                         HandleUnknownCommand(command, message.Client);
                         break;
@@ -155,7 +158,7 @@ namespace IrcServer
             Room room = m_ircServer.GetRoom(roomname);
             if (room == null)
             {
-                string msg = String.Format("402 {0} CR LF", roomname); //ERR_NOSUCHROOM
+                string msg = String.Format("402 JOIN {0} CR LF", roomname); //ERR_NOSUCHROOM
                 client.SendMessage(msg);
                 return;
             }
@@ -181,6 +184,47 @@ namespace IrcServer
 
             string response = String.Format("308 {0} CR LF", roomname); //RPL_JOINSUCCEEDED
             client.SendMessage(response);
+        }
+
+        private void HandleLeave(string[] arguments, IrcClient client)
+        {
+            if (!client.IsRegistered())
+            {
+                string msg = String.Format("411 LEAVE CR LF"); //ERR_NOTREGISTERED
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (arguments.Count() < 1)
+            {
+                string msg = "412 LEAVE CR LF"; //ERR_NEEDMOREPARAMS
+                client.SendMessage(msg);
+                return;
+            }
+
+            var roomname = arguments[0];
+            Room room = m_ircServer.GetRoom(roomname);
+            if (room == null)
+            {
+                string msg = String.Format("402 LEAVE {0} CR LF", roomname); //ERR_NOSUCHROOM
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (!room.Members.Contains(client))
+            {
+                string msg = String.Format("402 {0} CR LF", roomname); //ERR_NOTINROOM
+                client.SendMessage(msg);
+                return;
+            }
+
+            room.Members.Remove(client);
+
+            string response = String.Format("309 {0} CR LF", roomname); //RPL_LEAVESUCCEEDED
+            client.SendMessage(response);
+
+            string notification = String.Format("309 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_JOINSUCCEEDED
+            room.SendMessage(notification);
         }
 
         private void HandleUnknownCommand(string command, IrcClient client)

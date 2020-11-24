@@ -38,6 +38,12 @@ namespace IrcClient
             m_tcpHandler.SendMessage(message);
         }
 
+        public void Leave(string roomname)
+        {
+            string message = "LEAVE " + roomname + " CR LF";
+            m_tcpHandler.SendMessage(message);
+        }
+
         private void ProcessQueue()
         {
             while (true)
@@ -45,17 +51,14 @@ namespace IrcClient
                 Message message = null;
                 lock (m_messageQueue)
                 {
-                    Monitor.Wait(m_messageQueue);
-                    if (m_messageQueue.Count > 0)
+                    while (m_messageQueue.Count < 1)
                     {
-                        message = m_messageQueue.Dequeue();
+                        Monitor.Wait(m_messageQueue);
                     }
+                    message = m_messageQueue.Dequeue();
                 }
 
-                if (message != null)
-                {
-                    MessageProcessor.ProcessMessage(message);
-                }
+                MessageProcessor.ProcessMessage(message);
             }
         }
 

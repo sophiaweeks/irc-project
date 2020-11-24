@@ -56,6 +56,9 @@ namespace IrcClient
                     case "--j":
                         TryJoin(client, msg);
                         break;
+                    case "--l":
+                        TryLeave(client, msg);
+                        break;
                     default:
                         Console.WriteLine("Unrecognized command.");
                         break;
@@ -70,6 +73,7 @@ namespace IrcClient
             Console.WriteLine("  --r <nickname>: register under desired nickname");
             Console.WriteLine("  --c <room name>: create a new room with the desired name");
             Console.WriteLine("  --j <room name>: join the room with the specified name");
+            Console.WriteLine("  --l <room name>: leave the room with the specified name");
         }
 
         static private void TryRegister(IrcClient client, string message)
@@ -127,6 +131,25 @@ namespace IrcClient
 
             var roomname = pieces[1];
             client.Join(roomname);
+        }
+
+        static private void TryLeave(IrcClient client, string message)
+        {
+            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            if (pieces.Length < 2)
+            {
+                Console.WriteLine("Must include a room name");
+                return;
+            }
+
+            if (pieces.Length > 2)
+            {
+                Console.WriteLine("Room name can't contain spaces");
+                return;
+            }
+
+            var roomname = pieces[1];
+            client.Leave(roomname);
         }
     }
 }
