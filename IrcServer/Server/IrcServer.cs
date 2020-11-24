@@ -77,6 +77,11 @@ namespace IrcServer
             m_rooms.Add(new Room(roomname));
         }
 
+        public void RemoveRoom(Room room)
+        {
+            m_rooms.Remove(room);
+        }
+
         public Room GetRoom(string roomname)
         {
             foreach (Room r in m_rooms)
@@ -132,6 +137,29 @@ namespace IrcServer
 
         private void RemoveClient(IrcClient removeClient)
         {
+            var removeRooms = new List<Room>();
+            foreach (Room r in m_rooms)
+            {
+                if (r.Members.Contains(removeClient))
+                {
+                    r.Members.Remove(removeClient);
+                    if (r.Members.Count == 0)
+                    {
+                        removeRooms.Add(r);
+                    }
+                    else
+                    {
+                        string notification = String.Format("309 {0} {1} CR LF", r.GetName(), removeClient.GetNickname()); //RPL_LEAVESUCCEEDED
+                        r.SendMessage(notification);
+                    }
+                }
+            }
+
+            foreach (Room r in removeRooms)
+            {
+                m_rooms.Remove(r);
+            }
+            
             lock (m_clients)
             {
                 m_clients.Remove(removeClient);

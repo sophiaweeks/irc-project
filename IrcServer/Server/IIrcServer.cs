@@ -10,6 +10,7 @@ namespace IrcServer
         bool IsRoomNameInUse(string roomname);
         int GetNumRooms();
         void AddRoom(string roomname);
+        void RemoveRoom(Room room);
         Room GetRoom(string rooomname);
     }
 }

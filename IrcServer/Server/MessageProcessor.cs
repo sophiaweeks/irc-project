@@ -223,7 +223,13 @@ namespace IrcServer
             string response = String.Format("309 {0} CR LF", roomname); //RPL_LEAVESUCCEEDED
             client.SendMessage(response);
 
-            string notification = String.Format("309 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_JOINSUCCEEDED
+            if (room.Members.Count == 0)
+            {
+                m_ircServer.RemoveRoom(room);
+                return;
+            }
+
+            string notification = String.Format("309 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_LEAVESUCCEEDED
             room.SendMessage(notification);
         }
 
