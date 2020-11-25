@@ -78,11 +78,14 @@ namespace IrcClient
                     case "--j":
                         TryJoin(client, msgParts.Skip(1).ToArray());
                         break;
-                    case "--l":
-                        TryLeave(client, msgParts.Skip(1).ToArray());
+                    case "--p":
+                        TryPart(client, msgParts.Skip(1).ToArray());
                         break;
                     case "--m":
                         TryMessage(client, msgParts.Skip(1).ToArray());
+                        break;
+                    case "--l":
+                        TryList(client);
                         break;
                     default:
                         Console.WriteLine("Unrecognized command.");
@@ -162,7 +165,7 @@ namespace IrcClient
             client.Join(roomname);
         }
 
-        static private void TryLeave(IrcClient client, string[] args)
+        static private void TryPart(IrcClient client, string[] args)
         {
             if (args.Length < 1)
             {
@@ -177,7 +180,7 @@ namespace IrcClient
             }
 
             var roomname = args[0];
-            client.Leave(roomname);
+            client.Part(roomname);
         }
 
         static private void TryMessage(IrcClient client, string[] args)
@@ -196,7 +199,12 @@ namespace IrcClient
 
             var roomname = args[0];
             var text = args[1];
-            client.SendMessage(roomname, text);
+            client.Message(roomname, text);
+        }
+
+        static private void TryList(IrcClient client)
+        {
+            client.List();
         }
     }
 }

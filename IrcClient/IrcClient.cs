@@ -44,15 +44,21 @@ namespace IrcClient
             m_tcpHandler.SendMessage(message);
         }
 
-        public void Leave(string roomname)
+        public void Part(string roomname)
         {
-            string message = "LEAVE " + roomname + " CR LF";
+            string message = "PART " + roomname + " CR LF";
             m_tcpHandler.SendMessage(message);
         }
 
-        public void SendMessage(string roomname, string text)
+        public void Message(string roomname, string text)
         {
             string message = "MSG " + roomname + " \"" + text + "\" " + " CR LF";
+            m_tcpHandler.SendMessage(message);
+        }
+
+        public void List()
+        {
+            string message = "LIST CR LF";
             m_tcpHandler.SendMessage(message);
         }
 

@@ -58,6 +58,15 @@ namespace IrcClient
 
                 switch (command)
                 {
+                    case "301":
+                        Handle301(msgParts.Skip(1).ToArray());
+                        break;
+                    case "302":
+                        Handle302(msgParts.Skip(1).ToArray());
+                        break;
+                    case "303":
+                        Handle303(msgParts.Skip(1).ToArray());
+                        break;
                     case "306":
                         Handle306(msgParts.Skip(1).ToArray());
                         break;
@@ -117,6 +126,27 @@ namespace IrcClient
                         break;
                 }
             }
+        }
+
+        static private void Handle301(string[] arguments)
+        {
+            Console.WriteLine("List of rooms:");
+        }
+
+        static private void Handle302(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("   {0}", roomname);
+        }
+
+        static private void Handle303(string[] arguments)
+        {
+            Console.WriteLine("End of room list.");
         }
 
         static private void Handle306(string[] arguments)

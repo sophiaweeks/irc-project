@@ -100,6 +100,11 @@ namespace IrcServer
             return null;
         }
 
+        public List<Room> GetRooms()
+        {
+            return m_rooms;
+        }
+
         // private methods
         private void ProcessQueue()
         {

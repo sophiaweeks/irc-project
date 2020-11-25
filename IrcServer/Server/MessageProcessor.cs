@@ -44,11 +44,14 @@ namespace IrcServer
                     case "JOIN":
                         HandleJoin(msgParts.Skip(1).ToArray(), message.Client);
                         break;
-                    case "LEAVE":
-                        HandleLeave(msgParts.Skip(1).ToArray(), message.Client);
+                    case "PART":
+                        HandlePart(msgParts.Skip(1).ToArray(), message.Client);
                         break;
                     case "MSG":
                         HandleMsg(msgParts.Skip(1).ToArray(), message.Client);
+                        break;
+                    case "LIST":
+                        HandleList(msgParts.Skip(1).ToArray(), message.Client);
                         break;
                     default:
                         HandleUnknownCommand(command, message.Client);
@@ -202,18 +205,18 @@ namespace IrcServer
             client.SendMessage(response);
         }
 
-        private void HandleLeave(string[] arguments, IrcClient client)
+        private void HandlePart(string[] arguments, IrcClient client)
         {
             if (!client.IsRegistered())
             {
-                string msg = String.Format("411 LEAVE CR LF"); //ERR_NOTREGISTERED
+                string msg = String.Format("411 PART CR LF"); //ERR_NOTREGISTERED
                 client.SendMessage(msg);
                 return;
             }
 
             if (arguments.Count() < 1)
             {
-                string msg = "412 LEAVE CR LF"; //ERR_NEEDMOREPARAMS
+                string msg = "412 PART CR LF"; //ERR_NEEDMOREPARAMS
                 client.SendMessage(msg);
                 return;
             }
@@ -222,21 +225,21 @@ namespace IrcServer
             Room room = m_ircServer.GetRoom(roomname);
             if (room == null)
             {
-                string msg = String.Format("402 LEAVE {0} CR LF", roomname); //ERR_NOSUCHROOM
+                string msg = String.Format("402 PART {0} CR LF", roomname); //ERR_NOSUCHROOM
                 client.SendMessage(msg);
                 return;
             }
 
             if (!room.Members.Contains(client))
             {
-                string msg = String.Format("403 LEAVE {0} CR LF", roomname); //ERR_NOTINROOM
+                string msg = String.Format("403 PART {0} CR LF", roomname); //ERR_NOTINROOM
                 client.SendMessage(msg);
                 return;
             }
 
             room.Members.Remove(client);
 
-            string response = String.Format("309 {0} CR LF", roomname); //RPL_LEAVESUCCEEDED
+            string response = String.Format("309 {0} CR LF", roomname); //RPL_PARTSUCCEEDED
             client.SendMessage(response);
 
             if (room.Members.Count == 0)
@@ -245,7 +248,7 @@ namespace IrcServer
                 return;
             }
 
-            string notification = String.Format("309 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_LEAVESUCCEEDED
+            string notification = String.Format("309 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_PARTSUCCEEDED
             room.SendMessage(notification);
         }
 
@@ -282,8 +285,21 @@ namespace IrcServer
             }
 
             string text = arguments[1];
-            string notification = String.Format("311 {0} {1} \"{2}\" CR LF", roomname, client.GetNickname(), text); //RPL_LEAVESUCCEEDED
+            string notification = String.Format("311 {0} {1} \"{2}\" CR LF", roomname, client.GetNickname(), text); //RPL_MSGSUCCEEDED
             room.SendMessage(notification);
+        }
+
+        private void HandleList(string[] arguments, IrcClient client)
+        {
+            var rooms = m_ircServer.GetRooms();
+            client.SendMessage(String.Format("301 CR LF")); //RPL_LISTSTART
+
+            foreach (Room r in rooms)
+            {
+                client.SendMessage(String.Format("302 {0} CR LF", r.GetName())); //RPL_LIST
+            }
+
+            client.SendMessage(String.Format("303 CR LF")); //RPL_LISTEND
         }
 
         private void HandleUnknownCommand(string command, IrcClient client)

@@ -13,5 +13,6 @@ namespace IrcServer
         void AddRoom(string roomname);
         void RemoveRoom(Room room);
         Room GetRoom(string rooomname);
+        List<Room> GetRooms();
     }
 }
