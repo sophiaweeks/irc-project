@@ -58,6 +58,9 @@ namespace IrcClient
 
                 switch (command)
                 {
+                    case "300":
+                        Handle300(msgParts.Skip(1).ToArray());
+                        break;
                     case "301":
                         Handle301(msgParts.Skip(1).ToArray());
                         break;
@@ -66,6 +69,12 @@ namespace IrcClient
                         break;
                     case "303":
                         Handle303(msgParts.Skip(1).ToArray());
+                        break;
+                    case "304":
+                        Handle304(msgParts.Skip(1).ToArray());
+                        break;
+                    case "305":
+                        Handle305(msgParts.Skip(1).ToArray());
                         break;
                     case "306":
                         Handle306(msgParts.Skip(1).ToArray());
@@ -128,12 +137,12 @@ namespace IrcClient
             }
         }
 
-        static private void Handle301(string[] arguments)
+        static private void Handle300(string[] arguments)
         {
             Console.WriteLine("List of rooms:");
         }
 
-        static private void Handle302(string[] arguments)
+        static private void Handle301(string[] arguments)
         {
             if (arguments.Length < 1)
             {
@@ -144,9 +153,42 @@ namespace IrcClient
             Console.WriteLine("   {0}", roomname);
         }
 
-        static private void Handle303(string[] arguments)
+        static private void Handle302(string[] arguments)
         {
             Console.WriteLine("End of room list.");
+        }
+
+        static private void Handle303(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0]; 
+            Console.WriteLine("List of members in room {0}:", roomname);
+        }
+
+        static private void Handle304(string[] arguments)
+        {
+            if (arguments.Length < 2)
+            {
+                return;
+            }
+
+            var nickname = arguments[1];
+            Console.WriteLine("   {0}", nickname);
+        }
+
+        static private void Handle305(string[] arguments)
+        {
+            if (arguments.Length < 1)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            Console.WriteLine("End of member list for room {0}:", roomname);
         }
 
         static private void Handle306(string[] arguments)

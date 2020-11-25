@@ -53,6 +53,9 @@ namespace IrcServer
                     case "LIST":
                         HandleList(msgParts.Skip(1).ToArray(), message.Client);
                         break;
+                    case "NAMES":
+                        HandleNames(msgParts.Skip(1).ToArray(), message.Client);
+                        break;
                     default:
                         HandleUnknownCommand(command, message.Client);
                         break;
@@ -292,14 +295,43 @@ namespace IrcServer
         private void HandleList(string[] arguments, IrcClient client)
         {
             var rooms = m_ircServer.GetRooms();
-            client.SendMessage(String.Format("301 CR LF")); //RPL_LISTSTART
+            client.SendMessage(String.Format("300 CR LF")); //RPL_LISTSTART
 
             foreach (Room r in rooms)
             {
-                client.SendMessage(String.Format("302 {0} CR LF", r.GetName())); //RPL_LIST
+                client.SendMessage(String.Format("301 {0} CR LF", r.GetName())); //RPL_LIST
             }
 
-            client.SendMessage(String.Format("303 CR LF")); //RPL_LISTEND
+            client.SendMessage(String.Format("302 CR LF")); //RPL_LISTEND
+        }
+
+        private void HandleNames(string[] arguments, IrcClient client)
+        {
+            if (arguments.Count() < 1)
+            {
+                string msg = "412 NAMES CR LF"; //ERR_NEEDMOREPARAMS
+                client.SendMessage(msg);
+                return;
+            }
+
+            var roomname = arguments[0];
+            var room = m_ircServer.GetRoom(roomname);
+
+            if (room == null)
+            {
+                string msg = String.Format("402 NAMES {0} CR LF", roomname); //ERR_NOSUCHROOM
+                client.SendMessage(msg);
+                return;
+            }
+
+            client.SendMessage(String.Format("303 {0} CR LF", roomname)); //RPL_NAMESSTART
+
+            foreach (IrcClient c in room.Members)
+            {
+                client.SendMessage(String.Format("304 {0} {1} CR LF", roomname, c.GetNickname())); //RPL_NAMES
+            }
+
+            client.SendMessage(String.Format("305 {0} CR LF", roomname)); //RPL_NAMESEND
         }
 
         private void HandleUnknownCommand(string command, IrcClient client)
