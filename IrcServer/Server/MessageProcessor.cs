@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace IrcServer
 {
@@ -19,30 +20,35 @@ namespace IrcServer
 
             foreach (var m in messages)
             {
-                var pieces = m.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                if (pieces.Count() < 1)
+                var msgParts = Regex.Matches(m, "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'")
+                    .Cast<Match>().Select(iMatch => iMatch.Value.Replace("\"", "").Replace("'", "")).ToArray();
+
+                if (msgParts.Count() < 1)
                 {
                     return;
                 }
 
-                var command = pieces[0];
+                var command = msgParts[0];
 
                 switch(command)
                 {
                     case "NICK":
-                        HandleNick(pieces.Skip(1).ToArray(), message.Client);
-                        break;
-                    case "CREATE":
-                        HandleCreate(pieces.Skip(1).ToArray(), message.Client);
-                        break;
-                    case "JOIN":
-                        HandleJoin(pieces.Skip(1).ToArray(), message.Client);
-                        break;
-                    case "LEAVE":
-                        HandleLeave(pieces.Skip(1).ToArray(), message.Client);
+                        HandleNick(msgParts.Skip(1).ToArray(), message.Client);
                         break;
                     case "QUIT":
-                        HandleQuit(pieces.Skip(1).ToArray(), message.Client);
+                        HandleQuit(msgParts.Skip(1).ToArray(), message.Client);
+                        break;
+                    case "CREATE":
+                        HandleCreate(msgParts.Skip(1).ToArray(), message.Client);
+                        break;
+                    case "JOIN":
+                        HandleJoin(msgParts.Skip(1).ToArray(), message.Client);
+                        break;
+                    case "LEAVE":
+                        HandleLeave(msgParts.Skip(1).ToArray(), message.Client);
+                        break;
+                    case "MSG":
+                        HandleMsg(msgParts.Skip(1).ToArray(), message.Client);
                         break;
                     default:
                         HandleUnknownCommand(command, message.Client);
@@ -223,7 +229,7 @@ namespace IrcServer
 
             if (!room.Members.Contains(client))
             {
-                string msg = String.Format("402 {0} CR LF", roomname); //ERR_NOTINROOM
+                string msg = String.Format("403 LEAVE {0} CR LF", roomname); //ERR_NOTINROOM
                 client.SendMessage(msg);
                 return;
             }
@@ -240,6 +246,43 @@ namespace IrcServer
             }
 
             string notification = String.Format("309 {0} {1} CR LF", roomname, client.GetNickname()); //RPL_LEAVESUCCEEDED
+            room.SendMessage(notification);
+        }
+
+        private void HandleMsg(string[] arguments, IrcClient client)
+        {
+            if (!client.IsRegistered())
+            {
+                string msg = String.Format("411 MSG CR LF"); //ERR_NOTREGISTERED
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (arguments.Count() < 2)
+            {
+                string msg = "412 MSG CR LF"; //ERR_NEEDMOREPARAMS
+                client.SendMessage(msg);
+                return;
+            }
+
+            var roomname = arguments[0];
+            Room room = m_ircServer.GetRoom(roomname);
+            if (room == null)
+            {
+                string msg = String.Format("402 MSG {0} CR LF", roomname); //ERR_NOSUCHROOM
+                client.SendMessage(msg);
+                return;
+            }
+
+            if (!room.Members.Contains(client))
+            {
+                string msg = String.Format("403 MSG {0} CR LF", roomname); //ERR_NOTINROOM
+                client.SendMessage(msg);
+                return;
+            }
+
+            string text = arguments[1];
+            string notification = String.Format("311 {0} {1} \"{2}\" CR LF", roomname, client.GetNickname(), text); //RPL_LEAVESUCCEEDED
             room.SendMessage(notification);
         }
 

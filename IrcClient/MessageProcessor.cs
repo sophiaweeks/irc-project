@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
 
 namespace IrcClient
 {
@@ -45,66 +46,74 @@ namespace IrcClient
 
             foreach (var m in messages)
             {
-                var pieces = m.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                if (pieces.Count() < 1)
+                var msgParts = Regex.Matches(m, "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'")
+                                    .Cast<Match>().Select(iMatch => iMatch.Value.Replace("\"", "").Replace("'", "")).ToArray();
+
+                if (msgParts.Count() < 1)
                 {
                     return;
                 }
 
-                var command = pieces[0];
+                var command = msgParts[0];
 
                 switch (command)
                 {
                     case "306":
-                        Handle306(pieces.Skip(1).ToArray());
+                        Handle306(msgParts.Skip(1).ToArray());
                         break;
                     case "307":
-                        Handle307(pieces.Skip(1).ToArray());
+                        Handle307(msgParts.Skip(1).ToArray());
                         break;
                     case "308":
-                        Handle308(pieces.Skip(1).ToArray());
+                        Handle308(msgParts.Skip(1).ToArray());
                         break;
                     case "309":
-                        Handle309(pieces.Skip(1).ToArray());
+                        Handle309(msgParts.Skip(1).ToArray());
                         break;
                     case "310":
-                        Handle310(pieces.Skip(1).ToArray());
+                        Handle310(msgParts.Skip(1).ToArray());
+                        break;
+                    case "311":
+                        Handle311(msgParts.Skip(1).ToArray());
                         break;
                     case "402":
-                        Handle402(pieces.Skip(1).ToArray());
+                        Handle402(msgParts.Skip(1).ToArray());
+                        break;
+                    case "403":
+                        Handle403(msgParts.Skip(1).ToArray());
                         break;
                     case "404":
-                        Handle404(pieces.Skip(1).ToArray());
+                        Handle404(msgParts.Skip(1).ToArray());
                         break;
                     case "405":
-                        Handle405(pieces.Skip(1).ToArray());
+                        Handle405(msgParts.Skip(1).ToArray());
                         break;
                     case "406":
-                        Handle406(pieces.Skip(1).ToArray());
+                        Handle406(msgParts.Skip(1).ToArray());
                         break;
                     case "407":
-                        Handle407(pieces.Skip(1).ToArray());
+                        Handle407(msgParts.Skip(1).ToArray());
                         break;
                     case "408":
-                        Handle408(pieces.Skip(1).ToArray());
+                        Handle408(msgParts.Skip(1).ToArray());
                         break;
                     case "409":
-                        Handle409(pieces.Skip(1).ToArray());
+                        Handle409(msgParts.Skip(1).ToArray());
                         break;
                     case "410":
-                        Handle410(pieces.Skip(1).ToArray());
+                        Handle410(msgParts.Skip(1).ToArray());
                         break;
                     case "411":
-                        Handle411(pieces.Skip(1).ToArray());
+                        Handle411(msgParts.Skip(1).ToArray());
                         break;
                     case "412":
-                        Handle412(pieces.Skip(1).ToArray());
+                        Handle412(msgParts.Skip(1).ToArray());
                         break;
                     case "413":
-                        Handle413(pieces.Skip(1).ToArray());
+                        Handle413(msgParts.Skip(1).ToArray());
                         break;
                     case "414":
-                        Handle414(pieces.Skip(1).ToArray());
+                        Handle414(msgParts.Skip(1).ToArray());
                         break;
                 }
             }
@@ -175,6 +184,20 @@ namespace IrcClient
             Console.WriteLine("Successfully quit");
         }
 
+        static private void Handle311(string[] arguments)
+        {
+            if (arguments.Length < 3)
+            {
+                return;
+            }
+
+            var roomname = arguments[0];
+            var nickname = arguments[1];
+            var text = arguments[2];
+
+            Console.WriteLine("{0} in {1} says: {2}", nickname, roomname, text);
+        }
+
         static private void Handle402(string[] arguments)
         {
             if (arguments.Length < 2)
@@ -185,6 +208,18 @@ namespace IrcClient
             var command = arguments[0];
             var roomname = arguments[1];
             Console.WriteLine("ERROR: Couldn't execute command {0} on room {1} due to no such room", command, roomname);
+        }
+
+        static private void Handle403(string[] arguments)
+        {
+            if (arguments.Length < 2)
+            {
+                return;
+            }
+
+            var command = arguments[0];
+            var roomname = arguments[1];
+            Console.WriteLine("ERROR: Couldn't execute command {0} on room {1} due to not in room", command, roomname);
         }
 
         static private void Handle404(string[] arguments)

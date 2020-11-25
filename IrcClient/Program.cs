@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace IrcClient
 {
@@ -47,13 +48,17 @@ namespace IrcClient
             while (!quit)
             {
                 var msg = Console.ReadLine();
-                if (msg.Length < 3)
+
+                var msgParts = Regex.Matches(msg, "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'")
+                    .Cast<Match>().Select(iMatch => iMatch.Value.Replace("\"", "").Replace("'", "")).ToArray();
+
+                if (msgParts.Count() < 1)
                 {
                     Console.WriteLine("Unrecognized command.");
                     continue;
                 }
 
-                var command = msg.Substring(0, 3);
+                var command = msgParts[0];
 
                 switch (command)
                 {
@@ -65,16 +70,19 @@ namespace IrcClient
                         quit = true;
                         break;
                     case "--r":
-                        TryRegister(client, msg);
+                        TryRegister(client, msgParts.Skip(1).ToArray());
                         break;
                     case "--c":
-                        TryCreate(client, msg);
+                        TryCreate(client, msgParts.Skip(1).ToArray());
                         break;
                     case "--j":
-                        TryJoin(client, msg);
+                        TryJoin(client, msgParts.Skip(1).ToArray());
                         break;
                     case "--l":
-                        TryLeave(client, msg);
+                        TryLeave(client, msgParts.Skip(1).ToArray());
+                        break;
+                    case "--m":
+                        TryMessage(client, msgParts.Skip(1).ToArray());
                         break;
                     default:
                         Console.WriteLine("Unrecognized command.");
@@ -92,6 +100,7 @@ namespace IrcClient
             Console.WriteLine("  --c <room name>: create a new room with the desired name");
             Console.WriteLine("  --j <room name>: join the room with the specified name");
             Console.WriteLine("  --l <room name>: leave the room with the specified name");
+            Console.WriteLine("  --m <room name> <text>: send a message to the room with the specified name");
         }
 
         static private void Quit(IrcClient client)
@@ -99,80 +108,95 @@ namespace IrcClient
             client.Quit();
         }
 
-        static private void TryRegister(IrcClient client, string message)
+        static private void TryRegister(IrcClient client, string[] args)
         {
-            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            if (pieces.Length < 2)
+            if (args.Length < 1)
             {
                 Console.WriteLine("Must include a nickname");
                 return;
             }
 
-            if (pieces.Length > 2)
+            if (args[0].Contains(" "))
             {
                 Console.WriteLine("Nickname can't contain spaces");
                 return;
             }
 
-            var nickname = pieces[1];
+            var nickname = args[0];
             client.Register(nickname);
         }
 
-        static private void TryCreate(IrcClient client, string message)
+        static private void TryCreate(IrcClient client, string[] args)
         {
-            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            if (pieces.Length < 2)
+            if (args.Length < 1)
             {
                 Console.WriteLine("Must include a room name");
                 return;
             }
 
-            if (pieces.Length > 2)
+            if (args[0].Contains(" "))
             {
                 Console.WriteLine("Room name can't contain spaces");
                 return;
             }
 
-            var roomname = pieces[1];
+            var roomname = args[0];
             client.Create(roomname);
         }
 
-        static private void TryJoin(IrcClient client, string message)
+        static private void TryJoin(IrcClient client, string[] args)
         {
-            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            if (pieces.Length < 2)
+            if (args.Length < 1)
             {
                 Console.WriteLine("Must include a room name");
                 return;
             }
 
-            if (pieces.Length > 2)
+            if (args[0].Contains(" "))
             {
                 Console.WriteLine("Room name can't contain spaces");
                 return;
             }
 
-            var roomname = pieces[1];
+            var roomname = args[0];
             client.Join(roomname);
         }
 
-        static private void TryLeave(IrcClient client, string message)
+        static private void TryLeave(IrcClient client, string[] args)
         {
-            var pieces = message.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            if (pieces.Length < 2)
+            if (args.Length < 1)
             {
                 Console.WriteLine("Must include a room name");
                 return;
             }
 
-            if (pieces.Length > 2)
+            if (args[0].Contains(" "))
             {
                 Console.WriteLine("Room name can't contain spaces");
                 return;
             }
 
-            var roomname = pieces[1];
+            var roomname = args[0];
             client.Leave(roomname);
+        }
+
+        static private void TryMessage(IrcClient client, string[] args)
+        {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Must include a room name and text");
+                return;
+            }
+
+            if (args[0].Contains(" "))
+            {
+                Console.WriteLine("Room name can't contain spaces");
+                return;
+            }
+
+            var roomname = args[0];
+            var text = args[1];
+            client.SendMessage(roomname, text);
         }
     }
 }

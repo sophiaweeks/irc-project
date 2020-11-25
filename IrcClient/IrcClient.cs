@@ -50,6 +50,12 @@ namespace IrcClient
             m_tcpHandler.SendMessage(message);
         }
 
+        public void SendMessage(string roomname, string text)
+        {
+            string message = "MSG " + roomname + " \"" + text + "\" " + " CR LF";
+            m_tcpHandler.SendMessage(message);
+        }
+
         private void ProcessQueue()
         {
             while (true)
