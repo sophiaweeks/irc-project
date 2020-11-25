@@ -14,8 +14,8 @@ namespace IrcClient
         const string SERVER_IP = "127.0.0.1";
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to IRC!");
-            Console.WriteLine("Connecting to server...");
+            ConsoleWriter.WriteToConsole(TextType.Program, "Welcome to IRC!");
+            ConsoleWriter.WriteToConsole(TextType.Program, "Connecting to server...");
 
             IrcClient client;
             try
@@ -24,19 +24,19 @@ namespace IrcClient
             }
             catch(Exception)
             {
-                Console.WriteLine("Connection failed - the server may not be running");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Connection failed - the server may not be running");
                 Console.ReadLine();
                 return;
             }
 
-            Console.WriteLine("Connection successful!");
-            Console.WriteLine("Press --h for a list of commands. Hint: start by registering under a nickname.");
+            ConsoleWriter.WriteToConsole(TextType.Program, "Connection successful!");
+            ConsoleWriter.WriteToConsole(TextType.Program, "Press --h for a list of commands. Hint: start by registering under a nickname.");
             Console.WriteLine();
 
             RunProgram(client);
 
             Console.WriteLine();
-            Console.WriteLine("Goodbye!");
+            ConsoleWriter.WriteToConsole(TextType.Program, "Goodbye!");
             Thread.Sleep(1000);
 
             Environment.Exit(0);
@@ -54,7 +54,7 @@ namespace IrcClient
 
                 if (msgParts.Count() < 1)
                 {
-                    Console.WriteLine("Unrecognized command.");
+                    ConsoleWriter.WriteToConsole(TextType.Program, "Unrecognized command.");
                     continue;
                 }
 
@@ -99,16 +99,16 @@ namespace IrcClient
 
         static private void PrintCommands()
         {
-            Console.WriteLine("List of IRC commands:");
-            Console.WriteLine("  --h: print list of commands");
-            Console.WriteLine("  --q: quit IRC");
-            Console.WriteLine("  --r <nickname>: register under desired nickname");
-            Console.WriteLine("  --c <room name>: create a new room with the desired name");
-            Console.WriteLine("  --j <room name>: join the room with the specified name");
-            Console.WriteLine("  --P <room name>: leave the room with the specified name");
-            Console.WriteLine("  --m <room name> <text>: send a message to the room with the specified name");
-            Console.WriteLine("  --l: list all open rooms");
-            Console.WriteLine("  --n <room name>: list members in the specified room");
+            ConsoleWriter.WriteToConsole(TextType.Program, "List of IRC commands:");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --h: print list of commands");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --q: quit IRC");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --r <nickname>: register under desired nickname");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --c <room name>: create a new room with the desired name");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --j <room name>: join the room with the specified name");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --P <room name>: leave the room with the specified name");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --m <room name> <text>: send a message to the room with the specified name");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --l: list all open rooms");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --n <room name>: list members in the specified room");
         }
 
         static private void Quit(IrcClient client)
@@ -120,13 +120,13 @@ namespace IrcClient
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("Must include a nickname");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Must include a nickname");
                 return;
             }
 
             if (args[0].Contains(" "))
             {
-                Console.WriteLine("Nickname can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Nickname can't contain spaces");
                 return;
             }
 
@@ -138,13 +138,13 @@ namespace IrcClient
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("Must include a room name");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Must include a room name");
                 return;
             }
 
             if (args[0].Contains(" "))
             {
-                Console.WriteLine("Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
                 return;
             }
 
@@ -156,13 +156,13 @@ namespace IrcClient
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("Must include a room name");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Must include a room name");
                 return;
             }
 
             if (args[0].Contains(" "))
             {
-                Console.WriteLine("Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
                 return;
             }
 
@@ -174,13 +174,13 @@ namespace IrcClient
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("Must include a room name");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Must include a room name");
                 return;
             }
 
             if (args[0].Contains(" "))
             {
-                Console.WriteLine("Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
                 return;
             }
 
@@ -192,13 +192,13 @@ namespace IrcClient
         {
             if (args.Length < 2)
             {
-                Console.WriteLine("Must include a room name and text");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Must include a room name and text");
                 return;
             }
 
             if (args[0].Contains(" "))
             {
-                Console.WriteLine("Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
                 return;
             }
 
@@ -216,13 +216,13 @@ namespace IrcClient
         {
             if (args.Length < 1)
             {
-                Console.WriteLine("Must include a room name and text");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Must include a room name and text");
                 return;
             }
 
             if (args[0].Contains(" "))
             {
-                Console.WriteLine("Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
                 return;
             }
 

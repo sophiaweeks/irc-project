@@ -31,7 +31,7 @@ namespace IrcClient
             switch (message.Type)
             {
                 case MessageType.ConnectionClosed:
-                    Console.WriteLine("ERROR: The connection to the server closed unexpectedly.  Our apologies.");
+                    ConsoleWriter.WriteToConsole(TextType.ServerError, "ERROR: The connection to the server closed unexpectedly.  Our apologies.");
                     break;
                 case MessageType.Standard:
                     ParseMessage(message);
@@ -139,7 +139,7 @@ namespace IrcClient
 
         static private void Handle300(string[] arguments)
         {
-            Console.WriteLine("List of rooms:");
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, "List of rooms:");
         }
 
         static private void Handle301(string[] arguments)
@@ -150,12 +150,12 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("   {0}", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("   {0}", roomname));
         }
 
         static private void Handle302(string[] arguments)
         {
-            Console.WriteLine("End of room list.");
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, "End of room list.");
         }
 
         static private void Handle303(string[] arguments)
@@ -166,7 +166,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0]; 
-            Console.WriteLine("List of members in room {0}:", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("List of members in room {0}:", roomname));
         }
 
         static private void Handle304(string[] arguments)
@@ -177,7 +177,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[1];
-            Console.WriteLine("   {0}", nickname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("   {0}", nickname));
         }
 
         static private void Handle305(string[] arguments)
@@ -188,7 +188,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("End of member list for room {0}:", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("End of member list for room {0}:", roomname));
         }
 
         static private void Handle306(string[] arguments)
@@ -199,7 +199,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("Successfully registered under nickname: {0}", nickname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("Successfully registered under nickname: {0}", nickname));
         }
 
         static private void Handle307(string[] arguments)
@@ -210,7 +210,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("Successfully created room: {0}", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("Successfully created room: {0}", roomname));
         }
 
         static private void Handle308(string[] arguments)
@@ -225,11 +225,11 @@ namespace IrcClient
             if (arguments.Length > 1)
             {
                 var nickname = arguments[1];
-                Console.WriteLine("{0} joined room {1}", nickname, roomname);
+                ConsoleWriter.WriteToConsole(TextType.ServerNotification, String.Format("{0} joined room {1}", nickname, roomname));
                 return;
             }
 
-            Console.WriteLine("Successfully joined room: {0}", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("Successfully joined room: {0}", roomname));
         }
 
         static private void Handle309(string[] arguments)
@@ -244,16 +244,16 @@ namespace IrcClient
             if (arguments.Length > 1)
             {
                 var nickname = arguments[1];
-                Console.WriteLine("{0} left room {1}", nickname, roomname);
+                ConsoleWriter.WriteToConsole(TextType.ServerNotification, String.Format("{0} left room {1}", nickname, roomname));
                 return;
             }
 
-            Console.WriteLine("Successfully left room: {0}", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, String.Format("Successfully left room: {0}", roomname));
         }
 
         static private void Handle310(string[] arguments)
         {
-            Console.WriteLine("Successfully quit");
+            ConsoleWriter.WriteToConsole(TextType.ServerReply, "Successfully disconnected from the server");
         }
 
         static private void Handle311(string[] arguments)
@@ -267,7 +267,7 @@ namespace IrcClient
             var nickname = arguments[1];
             var text = arguments[2];
 
-            Console.WriteLine("{0} in {1} says: {2}", nickname, roomname, text);
+            ConsoleWriter.WriteToConsole(TextType.ServerNotification, String.Format("{0} in {1} says: {2}", nickname, roomname, text));
         }
 
         static private void Handle402(string[] arguments)
@@ -279,7 +279,7 @@ namespace IrcClient
 
             var command = arguments[0];
             var roomname = arguments[1];
-            Console.WriteLine("ERROR: Couldn't execute command {0} on room {1} due to no such room", command, roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format("ERROR: Couldn't execute command {0} on room {1} due to no such room", command, roomname));
         }
 
         static private void Handle403(string[] arguments)
@@ -291,7 +291,7 @@ namespace IrcClient
 
             var command = arguments[0];
             var roomname = arguments[1];
-            Console.WriteLine("ERROR: Couldn't execute command {0} on room {1} due to not in room", command, roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't execute command {0} on room {1} due to not in room", command, roomname));
         }
 
         static private void Handle404(string[] arguments)
@@ -302,7 +302,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("ERROR: Couldn't join room {0} due to already joined", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't join room {0} due to already joined", roomname));
         }
 
         static private void Handle405(string[] arguments)
@@ -313,7 +313,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("ERROR: Couldn't create room {0} due to too many rooms", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't create room {0} due to too many rooms", roomname));
         }
 
         static private void Handle406(string[] arguments)
@@ -324,7 +324,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("ERROR: Couldn't create room {0} due to room name in use", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't create room {0} due to room name in use", roomname));
         }
 
         static private void Handle407(string[] arguments)
@@ -335,7 +335,7 @@ namespace IrcClient
             }
 
             var roomname = arguments[0];
-            Console.WriteLine("ERROR: Couldn't create room {0} due to erroneous room name", roomname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't create room {0} due to erroneous room name", roomname));
         }
 
         static private void Handle408(string[] arguments)
@@ -346,7 +346,7 @@ namespace IrcClient
             }
 
             var command = arguments[0];
-            Console.WriteLine("ERROR: Unknown command: {0}", command);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Unknown command: {0}", command));
         }
         
         static private void Handle409(string[] arguments)
@@ -357,7 +357,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Failed to register due to erroneous nickname: {0}", nickname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Failed to register due to erroneous nickname: {0}", nickname));
         }
 
         static private void Handle410(string[] arguments)
@@ -368,7 +368,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Failed to register due to nickname in use: {0}", nickname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Failed to register due to nickname in use: {0}", nickname));
         }
 
         static private void Handle411(string[] arguments)
@@ -379,7 +379,7 @@ namespace IrcClient
             }
 
             var command = arguments[0];
-            Console.WriteLine("ERROR: Couldn't execute command \"{0}\" because you are not registered", command);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't execute command \"{0}\" because you are not registered", command));
         }
 
         static private void Handle412(string[] arguments)
@@ -390,7 +390,7 @@ namespace IrcClient
             }
 
             var command = arguments[0];
-            Console.WriteLine("ERROR: Couldn't execute command \"{0}\" due to not enough params: {0}", command);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Couldn't execute command \"{0}\" due to not enough params: {0}", command));
         }
 
         static private void Handle413(string[] arguments)
@@ -401,7 +401,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Failed to register due already registered under nickname: {0}", nickname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Failed to register due already registered under nickname: {0}", nickname));
         }
 
         static private void Handle414(string[] arguments)
@@ -412,7 +412,7 @@ namespace IrcClient
             }
 
             var nickname = arguments[0];
-            Console.WriteLine("ERROR: Failed to register due already registered under nickname: {0}", nickname);
+            ConsoleWriter.WriteToConsole(TextType.ServerError, String.Format( "ERROR: Failed to register due already registered under nickname: {0}", nickname));
         }
     }
 }
