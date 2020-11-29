@@ -80,11 +80,13 @@ namespace IrcServer
         public void AddRoom(string roomname)
         {
             m_rooms.Add(new Room(roomname));
+            Console.WriteLine("Created room {0}", roomname);
         }
 
         public void RemoveRoom(Room room)
         {
             m_rooms.Remove(room);
+            Console.WriteLine("Room {0} was destroyed", room.GetName());
         }
 
         public Room GetRoom(string roomname)
@@ -129,6 +131,7 @@ namespace IrcServer
             switch (message.Type)
             {
                 case MessageType.ConnectionClosed:
+                    Console.WriteLine("Client {0} closed connection unexpectedly", message.Client.IsRegistered() ? message.Client.GetNickname() : message.Client.ToString());
                     InternalRemoveClient(message.Client);
                     break;
                 case MessageType.Standard:
@@ -142,6 +145,7 @@ namespace IrcServer
             lock (m_clients)
             {
                 m_clients.Add(new IrcClient(client, this));
+                Console.WriteLine("New client added");
             }
         }
 
@@ -162,17 +166,20 @@ namespace IrcServer
                         string notification = String.Format("309 {0} {1} CR LF", r.GetName(), removeClient.GetNickname()); //RPL_LEAVESUCCEEDED
                         r.SendMessage(notification);
                     }
+                    Console.WriteLine("{0} left room {1}", removeClient.GetNickname(), r.GetName());
                 }
             }
 
             foreach (Room r in removeRooms)
             {
                 m_rooms.Remove(r);
+                Console.WriteLine("Room {0} was destroyed", r.GetName());
             }
             
             lock (m_clients)
             {
                 m_clients.Remove(removeClient);
+                Console.WriteLine("Client {0} disconnected", removeClient.IsRegistered() ? removeClient.GetNickname() : removeClient.ToString());
             }
         }
 

@@ -18,19 +18,14 @@ namespace IrcServer
 
         public bool IsRegistered()
         {
-            lock (this)
-            {
-                return m_registered;
-            }
+            return m_registered;
         }
 
         public void Register(string nickname)
         {
-            lock(this)
-            {
-                m_nickname = nickname;
-                m_registered = true;
-            }
+            m_nickname = nickname;
+            m_registered = true;
+            Console.WriteLine("Client registered under nickname {0}", nickname);
         }
 
         public string GetNickname()

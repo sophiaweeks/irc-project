@@ -27,6 +27,7 @@ namespace IrcServer
             }
 
             Console.WriteLine("The IRC server is operational!");
+            Console.WriteLine();
             Console.ReadLine();
         }
     }
