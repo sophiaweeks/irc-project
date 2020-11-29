@@ -91,7 +91,7 @@ namespace IrcClient
                         TryNames(client, msgParts.Skip(1).ToArray());
                         break;
                     default:
-                        Console.WriteLine("Unrecognized command.");
+                        ConsoleWriter.WriteToConsole(TextType.Program, String.Format("Unreconized command: {0}", command));
                         break;
                 }
             }
@@ -124,13 +124,13 @@ namespace IrcClient
                 return;
             }
 
-            if (args[0].Contains(" "))
+            var nickname = args[0];
+            if (nickname.Contains(" ") || nickname.Contains("CR LF"))
             {
-                ConsoleWriter.WriteToConsole(TextType.Program, "Nickname can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Nickname can't contain spaces or \"CR LF\" sequence");
                 return;
             }
 
-            var nickname = args[0];
             client.Register(nickname);
         }
 
@@ -142,13 +142,13 @@ namespace IrcClient
                 return;
             }
 
-            if (args[0].Contains(" "))
+            var roomname = args[0];
+            if (roomname.Contains(" ") || roomname.Contains("CR LF"))
             {
-                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces or \"CR LF\" sequence");
                 return;
             }
 
-            var roomname = args[0];
             client.Create(roomname);
         }
 
@@ -160,13 +160,13 @@ namespace IrcClient
                 return;
             }
 
-            if (args[0].Contains(" "))
+            var roomname = args[0];
+            if (roomname.Contains(" ") || roomname.Contains("CR LF"))
             {
-                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces or \"CR LF\" sequence");
                 return;
             }
 
-            var roomname = args[0];
             client.Join(roomname);
         }
 
@@ -178,13 +178,13 @@ namespace IrcClient
                 return;
             }
 
-            if (args[0].Contains(" "))
+            var roomname = args[0];
+            if (roomname.Contains(" ") || roomname.Contains("CR LF"))
             {
-                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces or \"CR LF\" sequence");
                 return;
             }
 
-            var roomname = args[0];
             client.Part(roomname);
         }
 
@@ -196,14 +196,21 @@ namespace IrcClient
                 return;
             }
 
-            if (args[0].Contains(" "))
+            var roomname = args[0];
+            var text = args[1];
+
+            if (roomname.Contains(" ") || roomname.Contains("CR LF"))
             {
-                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces or \"CR LF\" sequence");
                 return;
             }
 
-            var roomname = args[0];
-            var text = args[1];
+            if (text.Contains("CR LR"))
+            {
+                ConsoleWriter.WriteToConsole(TextType.Program, "Text can't contain \"CR LF\" sequence");
+                return;
+            }
+
             client.Message(roomname, text);
         }
 
@@ -220,13 +227,13 @@ namespace IrcClient
                 return;
             }
 
-            if (args[0].Contains(" "))
+            var roomname = args[0];
+            if (roomname.Contains(" ") || roomname.Contains("CR LF"))
             {
-                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces");
+                ConsoleWriter.WriteToConsole(TextType.Program, "Room name can't contain spaces or \"CR LF\" sequence");
                 return;
             }
 
-            var roomname = args[0];
             client.Names(roomname);
         }
     }

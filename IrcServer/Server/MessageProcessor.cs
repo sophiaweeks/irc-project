@@ -140,7 +140,7 @@ namespace IrcServer
 
             var roomname = arguments[0];
 
-            if (roomname.Length > MAX_ROOM_LENGTH)
+            if (roomname.Length > MAX_ROOM_LENGTH || roomname.Contains(" "))
             {
                 string msg = String.Format("407 {0} CR LF", roomname); //ERR_ERRONEOUSROOMNAME
                 client.SendMessage(msg);
