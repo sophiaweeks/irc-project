@@ -10,17 +10,28 @@ namespace IrcClient
 {
     class Program
     {
-        const int PORT_NO = 5000;
-        const string SERVER_IP = "127.0.0.1";
+        const int DEFAULT_PORT_NO = 5000;
+        const string DEFAULT_SERVER_IP = "127.0.0.1";
         static void Main(string[] args)
         {
+            string server_ip = DEFAULT_SERVER_IP;
+            int port_no = DEFAULT_PORT_NO;
+            if (args.Count() >= 1)
+            {
+                server_ip = args[0].ToString();
+            }
+            if (args.Count() >= 2)
+            {
+                port_no = int.Parse(args[1]);
+            }
+
             ConsoleWriter.WriteToConsole(TextType.Program, "Welcome to IRC!");
-            ConsoleWriter.WriteToConsole(TextType.Program, "Connecting to server...");
+            ConsoleWriter.WriteToConsole(TextType.Program, String.Format("Connecting to server on {0}:{1}...", server_ip, port_no));
 
             IrcClient client;
             try
             {
-                client = new IrcClient(SERVER_IP, PORT_NO);
+                client = new IrcClient(server_ip, port_no);
             }
             catch(Exception)
             {
