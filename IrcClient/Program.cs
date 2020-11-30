@@ -115,8 +115,8 @@ namespace IrcClient
             ConsoleWriter.WriteToConsole(TextType.Program, "  --r <nickname>: register under desired nickname");
             ConsoleWriter.WriteToConsole(TextType.Program, "  --c <room name>: create a new room with the desired name");
             ConsoleWriter.WriteToConsole(TextType.Program, "  --j <room name>: join the room with the specified name");
-            ConsoleWriter.WriteToConsole(TextType.Program, "  --P <room name>: leave the room with the specified name");
-            ConsoleWriter.WriteToConsole(TextType.Program, "  --m <room name> <text>: send a message to the room with the specified name");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --p <room name>: leave the room with the specified name");
+            ConsoleWriter.WriteToConsole(TextType.Program, "  --m <room name> \"<text>\": send a message to the room with the specified name");
             ConsoleWriter.WriteToConsole(TextType.Program, "  --l: list all open rooms");
             ConsoleWriter.WriteToConsole(TextType.Program, "  --n <room name>: list members in the specified room");
         }
