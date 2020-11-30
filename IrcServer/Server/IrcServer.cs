@@ -25,6 +25,15 @@ namespace IrcServer
         }
 
         // IMessageHandler
+        public void Exit()
+        {
+            lock (m_messageQueue)
+            {
+                m_messageQueue.Enqueue(new Message(MessageType.Exit, null, ""));
+                Monitor.Pulse(m_messageQueue);
+            }
+        }
+
         public void HandleMessage(Message message)
         {
             lock(m_messageQueue)
@@ -130,6 +139,9 @@ namespace IrcServer
         {
             switch (message.Type)
             {
+                case MessageType.Exit:
+                    InternalExit();
+                    break;
                 case MessageType.ConnectionClosed:
                     Console.WriteLine("Client {0} closed connection unexpectedly", message.Client.IsRegistered() ? message.Client.GetNickname() : message.Client.ToString());
                     InternalRemoveClient(message.Client);
@@ -137,6 +149,20 @@ namespace IrcServer
                 case MessageType.Standard:
                     m_messageProcessor.ParseMessage(message);
                     break;
+            }
+        }
+
+        private void InternalExit()
+        {
+            List<IrcClient> copyClientList;
+            lock (m_clients)
+            {
+                copyClientList = m_clients;
+            }
+
+            foreach (IrcClient c in copyClientList)
+            {
+                c.SendMessage("312 CR LF"); //RPL_SERVERCLOSED
             }
         }
 

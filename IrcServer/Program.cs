@@ -34,13 +34,17 @@ namespace IrcServer
             catch(Exception)
             {
                 Console.WriteLine("Could not start the server. Please try again later.");
-                Console.ReadLine();
+                Environment.Exit(0);
                 return;
             }
 
             Console.WriteLine("The IRC server is operational on {0}:{1}!", server_ip, port_no);
             Console.WriteLine();
             Console.ReadLine();
+
+            Console.WriteLine("Shutting down the server.");
+            server.Exit();
+            Environment.Exit(0);
         }
     }
 }

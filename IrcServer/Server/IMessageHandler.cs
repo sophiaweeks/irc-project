@@ -6,6 +6,7 @@ namespace IrcServer
 {
     enum MessageType
     {
+        Exit,
         ConnectionClosed,
         Standard,
     }

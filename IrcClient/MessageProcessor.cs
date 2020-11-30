@@ -32,6 +32,7 @@ namespace IrcClient
             {
                 case MessageType.ConnectionClosed:
                     ConsoleWriter.WriteToConsole(TextType.ServerError, "ERROR: The connection to the server closed unexpectedly.  Our apologies.");
+                    Environment.Exit(0);
                     break;
                 case MessageType.Standard:
                     ParseMessage(message);
@@ -93,6 +94,9 @@ namespace IrcClient
                         break;
                     case "311":
                         Handle311(msgParts.Skip(1).ToArray());
+                        break;
+                    case "312":
+                        Handle312(msgParts.Skip(1).ToArray());
                         break;
                     case "402":
                         Handle402(msgParts.Skip(1).ToArray());
@@ -268,6 +272,12 @@ namespace IrcClient
             var text = arguments[2];
 
             ConsoleWriter.WriteToConsole(TextType.ServerNotification, String.Format("{0} in {1} says: {2}", nickname, roomname, text));
+        }
+
+        static private void Handle312(string[] arguments)
+        {
+            ConsoleWriter.WriteToConsole(TextType.ServerNotification, String.Format("The server has shut down.  Please try again later."));
+            Environment.Exit(0);
         }
 
         static private void Handle402(string[] arguments)

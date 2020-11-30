@@ -36,7 +36,7 @@ namespace IrcClient
             catch(Exception)
             {
                 ConsoleWriter.WriteToConsole(TextType.Program, "Connection failed - the server may not be running");
-                Console.ReadLine();
+                Environment.Exit(0);
                 return;
             }
 
@@ -48,7 +48,6 @@ namespace IrcClient
 
             Console.WriteLine();
             ConsoleWriter.WriteToConsole(TextType.Program, "Goodbye!");
-            Thread.Sleep(1000);
 
             Environment.Exit(0);
         }
